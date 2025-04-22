@@ -5,48 +5,60 @@
 #include <limits>
 #include <stdexcept>
 
+// Подключение пространства имен std
+using namespace std;
+
 // Функция для полной проверки корректности ввода целого числа
-void validateInput(std::istream& input) {
+void validateInput(istream& input) {
     try {
         if (input.fail()) {
-            // Если ввод некорректен, выбрасываем исключение
-            throw std::invalid_argument("Ошибка: введено некорректное значение.");
+            throw invalid_argument("Ошибка: введено некорректное значение.");
         }
         // Очищаем буфер после успешного ввода
-        input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    } catch (const std::exception&) {
+        input.ignore(numeric_limits<streamsize>::max(), '\n');
+    } catch (const exception&) {
         // Сброс флага ошибки и очистка буфера при возникновении исключения
         input.clear();
-        input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        input.ignore(numeric_limits<streamsize>::max(), '\n');
         throw; // Повторно выбрасываем исключение для обработки выше уровнем
     }
 }
 
-int inputNumber(const std::string& prompt) {
+int inputNumber(const string& prompt) {
     int number;
     while (true) {
-        std::cout << prompt;
-        std::cin >> number;
+        cout << prompt;
+        cin >> number;
 
         // Вызываем функцию проверки ввода
-        validateInput(std::cin);
+        try {
+            validateInput(cin);
 
-        // Если ввод корректен, возвращаем число
-        return number;
+            // Дополнительная проверка: число должно быть положительным
+            if (number < 0) {
+                cerr << "Ошибка: число должно быть положительным.\n";
+                continue; // Перезапрашиваем ввод
+            }
+
+            // Если ввод корректен, возвращаем число
+            return number;
+        } catch (const invalid_argument& e) {
+            cerr << e.what() << "\n"; // Выводим сообщение об ошибке
+        }
     }
 }
 
 // Функция для вычисления результатов деления
 void calculateDivisionResults(int Q, int P) {
     if (P <= 0 || P >= Q) {
-        throw std::invalid_argument("Ошибка: P должно быть натуральным числом и меньше Q.");
+        throw invalid_argument("Ошибка: P должно быть натуральным числом и меньше Q.");
     }
 
     int remainder = Q % P;  // Остаток от деления
     int quotient = Q / P;   // Целая часть от деления
 
-    std::cout << "Остаток от деления Q на P: " << remainder << "\n";
-    std::cout << "Целая часть от деления Q на P: " << quotient << "\n";
+    cout << "Остаток от деления Q на P: " << remainder << "\n";
+    cout << "Целая часть от деления Q на P: " << quotient << "\n";
 }
 
-#endif // SURNAME_MATHTASK_H
+#endif 
